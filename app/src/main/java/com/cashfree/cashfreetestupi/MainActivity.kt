@@ -234,7 +234,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun getHeaders(): HashMap<String, String> {
         val headers = HashMap<String, String>()
-        headers["x-api-version"] = "2022-01-01"
         return headers
     }
 

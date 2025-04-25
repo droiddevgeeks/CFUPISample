@@ -49,12 +49,12 @@ class ScannerActivity : AppCompatActivity() {
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
                 Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
-
-                val upiIntent = Intent(this@ScannerActivity, MainActivity::class.java)
+                val upiIntent = Intent(this@ScannerActivity, PaymentActivity::class.java)
                 upiIntent.action = Intent.ACTION_VIEW
                 upiIntent.data = Uri.parse(it.text)
                 upiIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivityForResult(upiIntent, 201)
+                startActivity(upiIntent)
+                finish()
             }
         }
         codeScanner.errorCallback = ErrorCallback {

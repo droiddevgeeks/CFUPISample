@@ -1,14 +1,20 @@
 package com.cashfree.cashfreetestupi
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.cashfree.cashfreetestupi.databinding.ActivityPaymentBinding
 import com.cashfree.cashfreetestupi.model.EntitySimulation
@@ -25,11 +31,17 @@ class PaymentActivity : AppCompatActivity() {
     private var selectedReason: String = "FAILED"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        applyEdgeToEdgeInsets()
         binding = ActivityPaymentBinding.inflate(this.layoutInflater)
         setContentView(binding.root)
         initUI()
         setToolbar()
+        window?.let {
+            applyStatusBarColor(
+                window,
+                ContextCompat.getColor(this, R.color.colorPrimaryDark)
+            )
+        }
     }
 
     private fun setToolbar() {
@@ -258,6 +270,52 @@ class PaymentActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         lifecycleScope.launch(Dispatchers.Main) {
             Toast.makeText(this@PaymentActivity, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun applyEdgeToEdgeInsets() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            try {
+                val view = findViewById<View>(android.R.id.content)
+                ViewCompat.setOnApplyWindowInsetsListener(view) { v: View, windowInsets: WindowInsetsCompat ->
+                    val bars = windowInsets.getInsets(
+                        (WindowInsetsCompat.Type.systemBars()
+                                or WindowInsetsCompat.Type.displayCutout()
+                                or WindowInsetsCompat.Type.ime())
+                    )
+                    v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+                    windowInsets
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun applyStatusBarColor(window: Window, color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            try {
+                val decorView: View = window.decorView
+                ViewCompat.setOnApplyWindowInsetsListener(decorView) { v: View?, insets: WindowInsetsCompat ->
+                    val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+                    val statusBarOverlay = View(this)
+                    if (decorView is ViewGroup) {
+                        val params = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            statusBarHeight
+                        )
+                        decorView.addView(statusBarOverlay, params)
+                    }
+                    statusBarOverlay.setBackgroundColor(color)
+                    statusBarOverlay.layoutParams.height = statusBarHeight
+                    statusBarOverlay.requestLayout()
+                    insets
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            window.statusBarColor = color
         }
     }
 

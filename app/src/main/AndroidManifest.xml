@@ -39,6 +39,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
+                    android:host="mandate"
+                    android:scheme="upi" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
                     android:host="pay"
                     android:scheme="nb" />
             </intent-filter>
@@ -49,10 +60,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="payments-test.cashfree.com"
-                    android:pathPrefix="/pgbillpayuiapi/simulator"
-                    android:scheme="https" />
+                <data android:scheme="https"/>
+                <data android:host="payments-test.cashfree.com"/>
+                <data android:pathPrefix="/pgbillpayuiapi/simulator"/>
+                <data android:pathPrefix="/subs-checkout/checkout/simulator"/>
 
             </intent-filter>
         </activity>
